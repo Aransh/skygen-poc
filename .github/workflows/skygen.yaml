@@ -1,0 +1,33 @@
+name: application-terraform-apply
+
+on:
+  workflow_dispatch:
+    inputs:
+      tfvars_path:
+        type: string
+        required: true
+        description: ""
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform select workspace
+        id: select
+        run: |
+          workspace=$(basename ${{ inputs.tfvars_path }} | cut -d "." -f 1)
+          terraform workspace select $workspace || terraform workspace new $workspace
+
+      - name: Terraform Apply
+        id: apply
+        run: |
+          terraform apply -no-color -lock=false --auto-approve -var-file="${{ inputs.tfvars_path }}" 
+
