@@ -1,0 +1,17 @@
+# Dockerfile to create image with cron services
+FROM ubuntu:latest
+
+# Add the script to the Docker Image
+ADD curl.sh /root/curl.sh
+
+# Give execution rights on the cron scripts
+RUN chmod +x /root/curl.sh
+
+#Install Cron
+RUN apt-get update
+RUN apt-get -y install cron curl
+
+ARG CRON_SCHED
+
+# Run the command on container startup
+CMD crontab -l | { cat; echo "$CRON_SCHED HOST=$HOST PORT=$PORT /root/curl.sh"; } | crontab - && cron && sleep infinity
