@@ -1,6 +1,6 @@
 # Pulls the image
 resource "docker_image" "cron" {
-  name = "cron:1.0.0"
+  name = "cron_${var.env_name}:1.0.0"
 
   build {
     context = path.module
