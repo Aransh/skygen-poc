@@ -1,2 +1,2 @@
-env_name = test
-shay = levin
+env_name = "test"
+shay = "levin"
